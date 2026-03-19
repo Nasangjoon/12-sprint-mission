@@ -1,4 +1,16 @@
 package com.sprint.mission.discodeit.service;
 
+import com.sprint.mission.discodeit.entity.User;
+
+import java.util.List;
+import java.util.UUID;
+
 public interface UserService {
+
+    User save(User user);
+    List<User> findAll();
+    User findById(UUID id);
+    User deleteById(UUID id);
+    User update(UUID id, User user);
+
 }
