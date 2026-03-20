@@ -28,6 +28,8 @@ public class JavaApplication {
         System.out.println(userService.findAll());
         System.out.println("-----------사용자 테스트 끝 -------------------\n");
 
+
+
         System.out.println("------------ 메시지 점검 ----------------\n");
 
     }
