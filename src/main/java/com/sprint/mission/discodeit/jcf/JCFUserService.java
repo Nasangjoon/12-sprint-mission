@@ -49,7 +49,7 @@ public class JCFUserService implements UserService {
     public User update(UUID id, User user) {
         for (User u : data) {
             if (u.getId().equals(id)) {
-                u.update(user.getUsername(), user.getEmail(), user.getPassword(), user.getNickname());
+                u.update(user.getUsername(), user.getEmail(), user.getPassword(), user.getNickname(), user.getProfileImageUrl(),  user.getPhoneNumber());
                 return u;
             }
         }
