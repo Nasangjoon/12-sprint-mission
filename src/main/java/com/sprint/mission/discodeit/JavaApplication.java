@@ -29,7 +29,7 @@ public class JavaApplication {
         System.out.println("------------- 유저 삭제 -------------\n");
         userService.deleteById(user1.getId());
         System.out.println(userService.findAll());
-        System.out.println("-----------사용자 테스트 끝 -------------------\n");
+        System.out.println("-----------사용자 테스트 끝 -------------------\n\n\n\n");
 
 
 
@@ -50,7 +50,10 @@ public class JavaApplication {
         System.out.println("------------- 메시지 삭제 -------------\n");
         messageService.deleteMessage(message1.getId());
         System.out.println(messageService.findAll());
-        System.out.println("-----------메시지 테스트 끝 -------------------\n");
+        System.out.println("-----------메시지 테스트 끝 -------------------\n\n\n\n");
+
+
+        System.out.println("------------ 채널 점검 ----------------\n");
 
     }
 }
