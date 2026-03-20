@@ -7,14 +7,16 @@ import java.util.UUID;
 
 public class Message {
     private UUID id;
+    private UUID userId;
     private String content;
     private String link;
     private Long createdAt;
     private Long updatedAt;
 
 
-    public Message(UUID id, String content, String link) {
-        this.id = id;
+    public Message(UUID userId, String content, String link) {
+        id = UUID.randomUUID();
+        this.userId = userId;
         this.content = content;
         this.link = link;
         this.createdAt = System.currentTimeMillis();
@@ -41,9 +43,13 @@ public class Message {
         return updatedAt;
     }
 
+    public UUID getUserId() {
+        return userId;
+    }
 
-    public void update(UUID id, String content, String link) {
+    public void update(UUID id,UUID userId, String content, String link) {
         this.id = id;
+        this.userId = userId;
         this.content = content;
         this.link = link;
         this.updatedAt = System.currentTimeMillis();
@@ -59,12 +65,13 @@ public class Message {
 
         return """
                 Message{
-                UUID: %s,
+                메세지 UUID: %s,
+                유저의 UUID: %s,
                 문자 내용: %s,
                 메세지 링크: %s,
                 생성일자: %s,
                 수정일자: %s
                 }
-                """.formatted(id, content, link, createdStr, updatedStr);
+                """.formatted(id,userId,content, link, createdStr, updatedStr);
     }
 }
