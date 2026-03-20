@@ -6,7 +6,7 @@ import com.sprint.mission.discodeit.service.UserService;
 
 public class JavaApplication {
     public static void main(String[] args) {
-        System.out.println("---------- 사용자 점검 ----------------");
+        System.out.println("---------- 사용자 점검 ----------------\n");
         UserService userService = new JCFUserService();
 
         User user1 = new User("test", "hsa123", "test123@gmail.com", "test");
@@ -15,8 +15,9 @@ public class JavaApplication {
         userService.save(user1);
         userService.save(user2);
         userService.save(user3);
-
+        System.out.println("------------ 단건 조회 ---------------\n");
         System.out.println(userService.findById(user1.getId()));
+        System.out.println("------------ 다건 조회 ---------------");
         System.out.println(userService.findAll());
 
         User updateData = new User("updatedUser", "newPass!", "updated@gmail.com", "새닉네임");

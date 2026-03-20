@@ -32,18 +32,17 @@ public class JCFUserService implements UserService {
 
     @Override
     public List<User> findAll() {
-        return data;
+
+        return new ArrayList<>(data);
     }
 
     @Override
     public User deleteById(UUID id) {
-        for (User user : data) {
-            if (user.getId().equals(id)) {
-                data.remove(user);
-                return user;
-            }
+        User deleteUser = findById(id);
+        if(deleteUser != null) {
+            data.remove(deleteUser);
         }
-        return null;
+        return deleteUser;
     }
 
     @Override
