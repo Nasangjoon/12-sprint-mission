@@ -2,25 +2,27 @@ package com.sprint.mission.discodeit.entity;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Channel {
     private UUID id;
     private String name;
-    private String admin;
-    private String user;
+    private UUID admin;
+    private List<UUID> user;
     private Long createdAt;
     private Long updatedAt;
 
-    public Channel( String name, String admin, String user) {
+    public Channel( String name, UUID admin) {
         id =  UUID.randomUUID();
         this.name = name;
         this.admin = admin;
-        this.user = user;
+        this.user = new ArrayList<>();
+        this.user.add(admin);
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
     }
-
 
     public UUID getId() {
         return id;
@@ -30,11 +32,11 @@ public class Channel {
         return name;
     }
 
-    public String getAdmin() {
+    public UUID getAdmin() {
         return admin;
     }
 
-    public String getUser() {
+    public List<UUID> getUser() {
         return user;
     }
 
@@ -46,12 +48,19 @@ public class Channel {
         return updatedAt;
     }
 
-    public void update(UUID id, String name, String admin, String user) {
+    public void update(UUID id, String name, UUID admin, List<UUID> user) {
         this.id = id;
         this.name = name;
         this.admin = admin;
         this.user = user;
         this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void addUser(UUID userId) {
+        if (!user.contains(userId)) {
+            user.add(userId);
+            this.updatedAt = System.currentTimeMillis();
+        }
     }
 
 
