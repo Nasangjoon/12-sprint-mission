@@ -1,14 +1,17 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
     private String username;
-    private String password;
+    private transient String password;
     private String email;
     private String nickname;
     private Long createdAt;

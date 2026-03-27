@@ -40,7 +40,7 @@ public class JCFChannelService implements ChannelService {
     public void update(UUID id, Channel updateData) {
         Channel foundChannel = findById(id);
         if (foundChannel != null) {
-            foundChannel.update(id, updateData.getName(), updateData.getAdmin(), updateData.getUser());
+            foundChannel.update(id, updateData.getName(), updateData.getAdmin(), updateData.getUser(),updateData.getType());
         }
     }
 

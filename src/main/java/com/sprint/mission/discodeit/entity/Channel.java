@@ -12,14 +12,16 @@ public class Channel {
     private UUID admin;
     private List<UUID> user;
     private Long createdAt;
+    private ChannelType type; // 추가
     private Long updatedAt;
 
-    public Channel( String name, UUID admin) {
+    public Channel( String name, UUID admin, ChannelType type) {
         id =  UUID.randomUUID();
         this.name = name;
         this.admin = admin;
         this.user = new ArrayList<>();
         this.user.add(admin);
+        this.type = type;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
     }
@@ -48,11 +50,16 @@ public class Channel {
         return updatedAt;
     }
 
-    public void update(UUID id, String name, UUID admin, List<UUID> user) {
+    public ChannelType getType() {
+        return type;
+    }
+
+    public void update(UUID id, String name, UUID admin, List<UUID> user, ChannelType type) {
         this.id = id;
         this.name = name;
         this.admin = admin;
         this.user = user;
+        this.type = type;
         this.updatedAt = System.currentTimeMillis();
     }
 
@@ -76,10 +83,11 @@ public class Channel {
                      채널명 : %s
                      관리자 : %s
                      참여자 : %s
+                     채널 유형 : %s
                      생성일자 : %s
                      수정일자 : %s
                  }
-                 """.formatted(id, name, admin, user, createdStr, updatedStr);
+                 """.formatted(id, name, admin, user,type, createdStr, updatedStr);
 
 
     }
