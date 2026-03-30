@@ -33,7 +33,7 @@ public class BasicUserService implements UserService {
     @Override
     public User find(UUID userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User with id " + userId + " not found"));
+                .orElseThrow(() -> new RuntimeException("User with id " + userId + " 찾을 수 없습니다."));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class BasicUserService implements UserService {
     @Override
     public User update(UUID userId, String newUsername, String newEmail,  String newPassword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " 찾을 수 없습니다."));
         user.update(newUsername, newEmail, newPassword);
         return userRepository.save(user);
     }
@@ -52,7 +52,7 @@ public class BasicUserService implements UserService {
     @Override
     public void delete(UUID userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NoSuchElementException("User with id " + userId + " not found");
+            throw new NoSuchElementException("User with id " + userId + " 찾을 수 없습니다.");
         }
         userRepository.deleteById(userId);
     }

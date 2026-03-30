@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.entity;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -12,17 +13,19 @@ public class Channel implements Serializable {
 
     private UUID id;
     private String name;
+    private String description;
     private UUID admin;
     private List<UUID> user;
     private Long createdAt;
     private ChannelType type; // 추가
     private Long updatedAt;
 
-    public Channel( String name, UUID admin, ChannelType type) {
+    public Channel( String name, UUID admin, ChannelType type, String description) {
         id =  UUID.randomUUID();
         this.name = name;
         this.admin = admin;
         this.user = new ArrayList<>();
+        this.description = description;
         this.user.add(admin);
         this.type = type;
         this.createdAt = System.currentTimeMillis();
@@ -57,13 +60,24 @@ public class Channel implements Serializable {
         return type;
     }
 
-    public void update(UUID id, String name, UUID admin, List<UUID> user, ChannelType type) {
-        this.id = id;
-        this.name = name;
-        this.admin = admin;
-        this.user = user;
-        this.type = type;
-        this.updatedAt = System.currentTimeMillis();
+    public String getDescription() {
+        return description;
+    }
+
+    public void update(String newName, String newDescription) {
+        boolean anyValueUpdated = false;
+        if (newName != null && !newName.equals(this.name)) {
+            this.name = newName;
+            anyValueUpdated = true;
+        }
+        if (newDescription != null && !newDescription.equals(this.description)) {
+            this.description = newDescription;
+            anyValueUpdated = true;
+        }
+
+        if (anyValueUpdated) {
+            this.updatedAt = Instant.now().getEpochSecond();
+        }
     }
 
     public void addUser(UUID userId) {

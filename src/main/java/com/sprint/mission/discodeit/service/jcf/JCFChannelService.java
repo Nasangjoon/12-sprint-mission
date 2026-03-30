@@ -1,10 +1,10 @@
 package com.sprint.mission.discodeit.service.jcf;
 
 import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.service.ChannelService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,19 +12,21 @@ public class JCFChannelService implements ChannelService {
 
     private final List<Channel> data;
 
-    public JCFChannelService() {data = new ArrayList<Channel>();}
-
-    @Override
-    public Channel save(Channel channel) {
-        data.add(channel);
-        return channel;
+    public JCFChannelService() {
+        this.data = new ArrayList<>();
     }
 
+    @Override
+    public Channel create(ChannelType type, String name, String description, UUID adminId) {
+        Channel newChannel = new Channel(name, adminId, type, description);
+        data.add(newChannel);
+        return newChannel;
+    }
 
     @Override
-    public Channel findById(UUID id) {
+    public Channel find(UUID channelId) {
         for (Channel channel : data) {
-            if (channel.getId().equals(id) ) {
+            if (channel.getId().equals(channelId)) {
                 return channel;
             }
         }
@@ -37,21 +39,16 @@ public class JCFChannelService implements ChannelService {
     }
 
     @Override
-    public void update(UUID id, Channel updateData) {
-        Channel foundChannel = findById(id);
+    public Channel update(UUID channelId, String newName, String newDescription) {
+        Channel foundChannel = find(channelId);
         if (foundChannel != null) {
-            foundChannel.update(id, updateData.getName(), updateData.getAdmin(), updateData.getUser(),updateData.getType());
+            foundChannel.update(newName, newDescription);
         }
+        return foundChannel;
     }
-
 
     @Override
-    public void deleteById(UUID id) {
-        data.removeIf(channel -> channel.getId().equals(id));
+    public void delete(UUID channelId) {
+        data.removeIf(channel -> channel.getId().equals(channelId));
     }
-
-
-
-
-
 }

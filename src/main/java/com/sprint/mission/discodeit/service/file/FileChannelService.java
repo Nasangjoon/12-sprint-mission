@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.service.file;
 
 import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.service.ChannelService;
 
 import java.io.*;
@@ -10,17 +11,14 @@ import java.util.UUID;
 
 public class FileChannelService implements ChannelService {
     private final String FILE_PATH = "channels.dat";
-
-    File file = new File(FILE_PATH);
+    private final File file = new File(FILE_PATH);
 
     @SuppressWarnings("unchecked")
     private List<Channel> readFile() {
-        if (!file.exists()) return new ArrayList<>();
+        if (!file.exists() || file.length() == 0) return new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (List<Channel>) ois.readObject();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>();
         }
     }
@@ -28,47 +26,57 @@ public class FileChannelService implements ChannelService {
     private void writeFile(List<Channel> channels) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(channels);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public Channel save(Channel channel) {
+    public Channel create(ChannelType type, String name, String description, UUID adminId) {
+        Channel newChannel = new Channel(name, adminId, type, description);
         List<Channel> channels = readFile();
-        channels.add(channel);
+        channels.add(newChannel);
         writeFile(channels);
-        return channel;
+        return newChannel;
     }
 
     @Override
-    public Channel findById(UUID id) {
+    public Channel find(UUID channelId) {
         return readFile().stream()
-                .filter(c -> c.getId().equals(id))
+                .filter(c -> c.getId().equals(channelId))
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
-    public void update(UUID id, Channel updateData) {
+    public List<Channel> findAll() {
+        return readFile();
+    }
+
+    @Override
+    public Channel update(UUID channelId, String newName, String newDescription) {
         List<Channel> channels = readFile();
-        for (int i = 0; i < channels.size(); i++) {
-            if (channels.get(i).getId().equals(id)) {
-                channels.get(i).update(id, updateData.getName(), updateData.getAdmin(), updateData.getUser(), updateData.getType());
+        Channel updatedChannel = null;
+
+        for (Channel c : channels) {
+            if (c.getId().equals(channelId)) {
+                c.update(newName, newDescription);
+                updatedChannel = c;
                 break;
             }
         }
-        writeFile(channels);
+
+        if (updatedChannel != null) {
+            writeFile(channels);
+        }
+        return updatedChannel;
     }
 
     @Override
-    public List<Channel> findAll() {return readFile();}
-
-    @Override
-    public void deleteById(UUID id) {
+    public void delete(UUID channelId) {
         List<Channel> channels = readFile();
-        channels.removeIf(c -> c.getId().equals(id));
-        writeFile(channels);
+        if (channels.removeIf(c -> c.getId().equals(channelId))) {
+            writeFile(channels);
+        }
     }
-
 }
