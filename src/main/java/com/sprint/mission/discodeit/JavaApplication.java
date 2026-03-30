@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.repository.UserRepository;
+import com.sprint.mission.discodeit.repository.file.FileUserRepository;
 import com.sprint.mission.discodeit.repository.jcf.JCFUserRepository;
 import com.sprint.mission.discodeit.service.basic.BasicUserService;
 import com.sprint.mission.discodeit.service.jcf.JCFChannelService;
@@ -22,7 +23,7 @@ public class JavaApplication {
 
     public static void main(String[] args) {
 
-        UserRepository userRepository = new JCFUserRepository();
+        UserRepository userRepository = new FileUserRepository();
 
         UserService userService = new BasicUserService(userRepository);
 
