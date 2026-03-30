@@ -10,20 +10,22 @@ import java.util.UUID;
 public class JCFMessageService implements MessageService {
     private final List<Message> data;
 
-    public JCFMessageService() {data = new ArrayList<>();}
+    public JCFMessageService() {
+        this.data = new ArrayList<>();
+    }
 
     @Override
-    public Message save(Message message)
-    {
+    public Message create(String content, UUID channelId, UUID userId) {
+        Message message = new Message(userId, content, channelId.toString());
         data.add(message);
         return message;
     }
 
     @Override
-    public List<Message> findById(UUID id) {
+    public Message find(UUID messageId) {
         for (Message message : data) {
-            if (message.getId().equals(id)) {
-                return List.of(message);
+            if (message.getId().equals(messageId)) {
+                return message;
             }
         }
         return null;
@@ -35,24 +37,16 @@ public class JCFMessageService implements MessageService {
     }
 
     @Override
-    public Message update(UUID id, Message message) {
-        for (Message m : data) {
-            if (m.getId().equals(id)) {
-                m.update(id, message.getUserId(), message.getContent(), message.getLink());
-                return m;
-            }
+    public Message update(UUID messageId, String newContent) {
+        Message target = find(messageId);
+        if (target != null) {
+            target.update(newContent);
         }
-        return null;
+        return target;
     }
 
     @Override
-    public Message deleteMessage(UUID id) {
-        Message deleteMessage = findById(id).get(0);
-            if (deleteMessage != null) {
-                data.remove(deleteMessage);
-            }
-        return null;
+    public void delete(UUID messageId) {
+        data.removeIf(m -> m.getId().equals(messageId));
     }
-
-
 }

@@ -10,50 +10,41 @@ import java.util.UUID;
 
 public class FileMessageService implements MessageService {
     private final String FILE_PATH = "message.dat";
-
-    File file = new File(FILE_PATH);
+    private final File file = new File(FILE_PATH);
 
     @SuppressWarnings("unchecked")
     private List<Message> readFile() {
-        if (!file.exists()) return new ArrayList<>();
+        if (!file.exists() || file.length() == 0) return new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (List<Message>) ois.readObject();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>();
         }
     }
 
-
-    private void  writeFile() {
+    private void writeFile(List<Message> messages) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-            oos.writeObject(readFile());
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }}
-
-    private void writeMessage() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-            oos.writeObject(readFile());
-        }  catch (IOException e) {
+            oos.writeObject(messages);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public Message save(Message message) {
+    public Message create(String content, UUID channelId, UUID userId) {
+        Message message = new Message(userId, content, channelId.toString());
         List<Message> messages = readFile();
         messages.add(message);
-        writeFile();
+        writeFile(messages);
         return message;
     }
 
     @Override
-    public List<Message> findById(UUID id) {
+    public Message find(UUID messageId) {
         return readFile().stream()
-                .filter(m -> m.getId().equals(id))
-                .toList();
+                .filter(m -> m.getId().equals(messageId))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -62,27 +53,27 @@ public class FileMessageService implements MessageService {
     }
 
     @Override
-    public Message deleteMessage(UUID id) {
+    public Message update(UUID messageId, String newContent) {
         List<Message> messages = readFile();
-        Message target = messages.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        Message target = null;
+        for (Message m : messages) {
+            if (m.getId().equals(messageId)) {
+                m.update(newContent);
+                target = m;
+                break;
+            }
+        }
         if (target != null) {
-            messages.remove(target);
-            writeFile();
+            writeFile(messages);
         }
         return target;
     }
 
     @Override
-    public Message update(UUID id, Message message) {
+    public void delete(UUID messageId) {
         List<Message> messages = readFile();
-        Message target = messages.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
-        if (target != null) {
-            messages.remove(target);
+        if (messages.removeIf(m -> m.getId().equals(messageId))) {
+            writeFile(messages);
         }
-        messages.add(message);
-        writeFile();
-        return target;
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.entity;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -50,12 +51,16 @@ public class Message implements Serializable {
         return userId;
     }
 
-    public void update(UUID id,UUID userId, String content, String link) {
-        this.id = id;
-        this.userId = userId;
-        this.content = content;
-        this.link = link;
-        this.updatedAt = System.currentTimeMillis();
+    public void update(String newContent) {
+        boolean anyValueUpdated = false;
+        if (newContent != null && !newContent.equals(this.content)) {
+            this.content = newContent;
+            anyValueUpdated = true;
+        }
+
+        if (anyValueUpdated) {
+            this.updatedAt = Instant.now().getEpochSecond();
+        }
     }
 
     @Override

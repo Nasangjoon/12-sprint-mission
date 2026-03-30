@@ -176,5 +176,9 @@ gradle-app.setting
 *.hprof
 
 .idea
+# Git이 무시할 데이터 폴더
+file-data-map/
+*.ser
+*.dat
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,gradle,intellij+all
