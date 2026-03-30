@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit;
 
 import com.sprint.mission.discodeit.entity.Channel;
+import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.jcf.JCFChannelService;
@@ -15,8 +16,8 @@ public class JavaApplication {
 
         UserService userService = new JCFUserService();
         MessageService messageService = new JCFMessageService();
-        ChannelService channelService = new JCFChannelService();
-
+//        ChannelService channelService = new JCFChannelService();
+            ChannelService channelService = new JCFChannelService();
         System.out.println("------------ 사용자 점검 ----------------\n");
         System.out.println("------------ 단건 조회 ---------------\n");
         User user1 = new User("test", "hsa123", "test123@gmail.com", "test", "http://test.com/profile.jpg","+8210-1234-5678");
@@ -59,7 +60,7 @@ public class JavaApplication {
 
 
         System.out.println("------------ 채널 점검 ----------------\n");
-        Channel channel1 = new Channel("게임할래요", user2.getId());
+        Channel channel1 = new Channel("게임할래요", user2.getId(), ChannelType.PUBLIC);
         channel1.getUser().add(user3.getId());
         channelService.save(channel1);
         System.out.println("------------ 단건 조회 ---------------\n");
@@ -67,7 +68,7 @@ public class JavaApplication {
         System.out.println("------------ 다건 조회 ---------------\n");
         System.out.println(channelService.findAll());
         System.out.println("------------- 채널 업데이트 -------------\n");
-        Channel updateChannelData = new Channel("채널명 변경", user3.getId());
+        Channel updateChannelData = new Channel("채널명 변경", user3.getId(), ChannelType.PRIVATE);
         channelService.update(channel1.getId(), updateChannelData);
         System.out.println(channelService.findById(channel1.getId()));
         System.out.println("------------- 채널 삭제 -------------\n");
