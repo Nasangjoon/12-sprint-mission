@@ -11,50 +11,41 @@ public class JCFUserService implements UserService {
     private final List<User> data;
 
     public JCFUserService() {
-        data = new ArrayList<>();
+        this.data = new ArrayList<>();
     }
 
     @Override
-    public User save(User user) {
-        data.add(user);
-        return user;
+    public User create(String username, String password, String email, String nickname, String profileImageUrl, String phoneNumber) {
+        User newUser = new User(username, password, email, nickname, profileImageUrl, phoneNumber);
+        data.add(newUser);
+        return newUser;
     }
 
     @Override
-    public User findById(UUID id) {
-        for (User user : data) {
-            if (user.getId().equals(id)) {
-                return user;
-            }
-        }
-        return null;
+    public User find(UUID userId) {
+        return data.stream()
+                .filter(user -> user.getId().equals(userId))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public List<User> findAll() {
-
         return new ArrayList<>(data);
     }
 
     @Override
-    public User deleteById(UUID id) {
-        User deleteUser = findById(id);
-        if(deleteUser != null) {
-            data.remove(deleteUser);
-        }
-        return deleteUser;
-    }
-
-    @Override
-    public User update(UUID id, User user) {
-        for (User u : data) {
-            if (u.getId().equals(id)) {
-                u.update(user.getUsername(), user.getEmail(), user.getPassword(), user.getNickname(), user.getProfileImageUrl(),  user.getPhoneNumber());
-                return u;
-            }
+    public User update(UUID userId, String newUsername, String newEmail, String newPassword) {
+        User user = find(userId);
+        if (user != null) {
+            user.update(newUsername, newEmail, newPassword);
+            return user;
         }
         return null;
     }
 
-
+    @Override
+    public void delete(UUID userId) {
+        data.removeIf(user -> user.getId().equals(userId));
+    }
 }

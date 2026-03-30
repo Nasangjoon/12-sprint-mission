@@ -10,17 +10,14 @@ import java.util.UUID;
 
 public class FileUserService implements UserService {
     private final String FILE_PATH = "users.dat";
-
-    File file = new File(FILE_PATH);
+    private final File file = new File(FILE_PATH);
 
     @SuppressWarnings("unchecked")
     private List<User> readFile() {
         if (!file.exists()) return new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (List<User>) ois.readObject();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>();
         }
     }
@@ -28,24 +25,23 @@ public class FileUserService implements UserService {
     private void writeFile(List<User> users) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(users);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     @Override
-    public User save(User user) {
+    public User create(String username, String password, String email, String nickname, String profileImageUrl, String phoneNumber) {
         List<User> users = readFile();
-        users.add(user);
+        User newUser = new User(username, password, email, nickname, profileImageUrl, phoneNumber);
+        users.add(newUser);
         writeFile(users);
-        return user;
+        return newUser;
     }
 
-
     @Override
-    public User findById(UUID id) {
+    public User find(UUID userId) {
         return readFile().stream()
-                .filter(u -> u.getId().equals(id))
+                .filter(u -> u.getId().equals(userId))
                 .findFirst()
                 .orElse(null);
     }
@@ -56,23 +52,11 @@ public class FileUserService implements UserService {
     }
 
     @Override
-    public User deleteById(UUID id) {
-        List<User> users = readFile();
-        User target = users.stream().filter(u -> u.getId().equals(id)).findFirst().orElse(null);
-        if (target != null) {
-            users.remove(target);
-            writeFile(users);
-        }
-        return target;
-    }
-
-    @Override
-    public User update(UUID id, User user) {
+    public User update(UUID userId, String newUsername, String newEmail, String newPassword) {
         List<User> users = readFile();
         for (User u : users) {
-            if (u.getId().equals(id)) {
-                u.update(user.getUsername(), user.getEmail(), user.getPassword(),
-                        user.getNickname(), user.getProfileImageUrl(), user.getPhoneNumber());
+            if (u.getId().equals(userId)) {
+                u.update(newUsername, newEmail, newPassword);
                 writeFile(users);
                 return u;
             }
@@ -80,5 +64,11 @@ public class FileUserService implements UserService {
         return null;
     }
 
-
+    @Override
+    public void delete(UUID userId) {
+        List<User> users = readFile();
+        if (users.removeIf(u -> u.getId().equals(userId))) {
+            writeFile(users);
+        }
+    }
 }
