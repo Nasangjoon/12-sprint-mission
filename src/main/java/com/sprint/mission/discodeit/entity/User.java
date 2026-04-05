@@ -91,26 +91,16 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss.SSS초");
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
-        String createdStr = LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(createdAt), zoneId).format(formatter);
-        String updatedStr = LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(updatedAt), zoneId).format(formatter);
-
-
-        return """
-                User {
-                    UUID: %s,
-                    이름: %s,
-                    이메일: %s,
-                    닉네임: %s,
-                    생성일자: %s,
-                    업데이트일자: %s
-                    프로필 이미지: %s
-                    전화번호: %s
-                }
-                """.formatted(id, username, email, nickname, createdStr, updatedStr,  profileImageUrl, phoneNumber);
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", profileImageUrl='" + profileImageUrl + '\'' +
+                '}';
     }
-
-
-
 }

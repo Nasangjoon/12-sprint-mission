@@ -65,21 +65,13 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초 SSS");
-        ZoneId zone = ZoneId.of("Asia/Seoul");
-        String createdStr = LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(createdAt), zone).format(dtf);
-        String updatedStr = LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(updatedAt), zone).format(dtf);
-
-
-        return """
-                Message{
-                메세지 UUID: %s,
-                유저의 UUID: %s,
-                문자 내용: %s,
-                메세지 링크: %s,
-                생성일자: %s,
-                수정일자: %s
-                }
-                """.formatted(id,userId,content, link, createdStr, updatedStr);
+        return "Message{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", content='" + content + '\'' +
+                ", link='" + link + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

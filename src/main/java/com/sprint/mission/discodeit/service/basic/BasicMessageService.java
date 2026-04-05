@@ -54,10 +54,10 @@ public class BasicMessageService implements MessageService {
     }
 
     @Override
-    public void delete(UUID channelId) {
-        if (!channelRepository.existsById(channelId)) {
-            throw new NoSuchElementException("Channel not found with id " + channelId + "찾을 수 없습니다.");
+    public void delete(UUID messageId) {
+        if (!messageRepository.existsById(messageId)) {
+            throw new NoSuchElementException("Message not found with id " + messageId);
         }
-        messageRepository.deleteById(channelId);
+        messageRepository.deleteById(messageId);
     }
 }

@@ -48,14 +48,19 @@ public class FileMessageRepository implements MessageRepository {
     public Optional<Message> findById(UUID id) {
         Message messageNullable = null;
         Path path = resolvePath(id);
-        try (
-                FileInputStream fis = new FileInputStream(path.toFile());
-                ObjectInputStream ois = new ObjectInputStream(fis)
-        ) {
-            messageNullable = (Message) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        // [추가] 파일이 존재할 때만 읽기 시도!
+        if (Files.exists(path)) {
+            try (
+                    FileInputStream fis = new FileInputStream(path.toFile());
+                    ObjectInputStream ois = new ObjectInputStream(fis)
+            ) {
+                messageNullable = (Message) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
+
+        // 파일이 없으면 messageNullable은 null이므로 Optional.empty()가 안전하게 반환됨
         return Optional.ofNullable(messageNullable);
     }
 

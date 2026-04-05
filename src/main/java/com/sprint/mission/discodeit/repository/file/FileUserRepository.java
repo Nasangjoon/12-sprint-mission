@@ -41,6 +41,7 @@ public class FileUserRepository implements UserRepository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Saved to: " + path.toAbsolutePath());
         return user;
     }
 
@@ -48,7 +49,7 @@ public class FileUserRepository implements UserRepository {
     public Optional<User> findById(UUID id) {
         User userNullable = null;
         Path path = resolvePath(id);
-        if (Files.notExists(path)) {
+        if (!Files.notExists(path)) {
             try (
                     FileInputStream fis = new FileInputStream(path.toFile());
                     ObjectInputStream ois = new ObjectInputStream(fis)
