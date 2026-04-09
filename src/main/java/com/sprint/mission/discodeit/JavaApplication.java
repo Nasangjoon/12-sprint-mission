@@ -16,8 +16,10 @@ import com.sprint.mission.discodeit.service.basic.BasicUserService;
 import com.sprint.mission.discodeit.service.ChannelService;
 import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.service.UserService;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.UUID;
+
 
 public class JavaApplication {
 
