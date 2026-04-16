@@ -2,10 +2,6 @@ package com.sprint.mission.discodeit.repository.file;
 
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.repository.UserRepository;
-import lombok.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
 public class FileUserRepository implements UserRepository {
     private final Path DIRECTORY;
     private final String EXTENSION = ".ser";
@@ -26,7 +20,7 @@ public class FileUserRepository implements UserRepository {
         if (Files.notExists(DIRECTORY)) {
             try {
                 Files.createDirectories(DIRECTORY);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -47,7 +41,6 @@ public class FileUserRepository implements UserRepository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Saved to: " + path.toAbsolutePath());
         return user;
     }
 
@@ -55,7 +48,7 @@ public class FileUserRepository implements UserRepository {
     public Optional<User> findById(UUID id) {
         User userNullable = null;
         Path path = resolvePath(id);
-        if (!Files.notExists(path)) {
+        if (Files.exists(path)) {
             try (
                     FileInputStream fis = new FileInputStream(path.toFile());
                     ObjectInputStream ois = new ObjectInputStream(fis)
@@ -79,7 +72,7 @@ public class FileUserRepository implements UserRepository {
                                 ObjectInputStream ois = new ObjectInputStream(fis)
                         ) {
                             return (User) ois.readObject();
-                        }catch (IOException | ClassNotFoundException e) {
+                        } catch (IOException | ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
                     })

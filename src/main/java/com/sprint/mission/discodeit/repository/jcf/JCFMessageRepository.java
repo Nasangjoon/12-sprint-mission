@@ -8,7 +8,9 @@ import java.util.*;
 public class JCFMessageRepository implements MessageRepository {
     private final Map<UUID, Message> data;
 
-    public JCFMessageRepository() { this.data = new HashMap<>(); }
+    public JCFMessageRepository() {
+        this.data = new HashMap<>();
+    }
 
     @Override
     public Message save(Message message) {
@@ -35,5 +37,4 @@ public class JCFMessageRepository implements MessageRepository {
     public void deleteById(UUID id) {
         this.data.remove(id);
     }
-
 }

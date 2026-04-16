@@ -2,8 +2,6 @@ package com.sprint.mission.discodeit.repository.file;
 
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
 public class FileChannelRepository implements ChannelRepository {
     private final Path DIRECTORY;
     private final String EXTENSION = ".ser";
@@ -24,7 +20,7 @@ public class FileChannelRepository implements ChannelRepository {
         if (Files.notExists(DIRECTORY)) {
             try {
                 Files.createDirectories(DIRECTORY);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -81,7 +77,7 @@ public class FileChannelRepository implements ChannelRepository {
                         }
                     })
                     .toList();
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

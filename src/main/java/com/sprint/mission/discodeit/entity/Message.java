@@ -2,41 +2,31 @@ package com.sprint.mission.discodeit.entity;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private UUID id;
-    private UUID userId;
-    private String content;
-    private String link;
     private Long createdAt;
     private Long updatedAt;
+    //
+    private String content;
+    //
+    private UUID channelId;
+    private UUID authorId;
 
-
-    public Message(UUID userId, String content, String link) {
-        id = UUID.randomUUID();
-        this.userId = userId;
+    public Message(String content, UUID channelId, UUID authorId) {
+        this.id = UUID.randomUUID();
+        this.createdAt = Instant.now().getEpochSecond();
+        //
         this.content = content;
-        this.link = link;
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
+        this.channelId = channelId;
+        this.authorId = authorId;
     }
 
     public UUID getId() {
         return id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getLink() {
-        return link;
     }
 
     public Long getCreatedAt() {
@@ -47,8 +37,16 @@ public class Message implements Serializable {
         return updatedAt;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public String getContent() {
+        return content;
+    }
+
+    public UUID getChannelId() {
+        return channelId;
+    }
+
+    public UUID getAuthorId() {
+        return authorId;
     }
 
     public void update(String newContent) {
@@ -61,17 +59,5 @@ public class Message implements Serializable {
         if (anyValueUpdated) {
             this.updatedAt = Instant.now().getEpochSecond();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", content='" + content + '\'' +
-                ", link='" + link + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
     }
 }

@@ -2,63 +2,30 @@ package com.sprint.mission.discodeit.entity;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private UUID id;
-    private String username;
-    private transient String password;
-    private String email;
-    private String nickname;
     private Long createdAt;
     private Long updatedAt;
-    private String phoneNumber;
-    private String profileImageUrl;
+    //
+    private String username;
+    private String email;
+    private String password;
 
-    public User(String username, String password, String email, String nickname, String profileImageUrl, String phoneNumber) {
-        id = UUID.randomUUID();
+    public User(String username, String email, String password) {
+        this.id = UUID.randomUUID();
+        this.createdAt = Instant.now().getEpochSecond();
+        //
         this.username = username;
-        this.password = password;
         this.email = email;
-        this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
-        this.phoneNumber = phoneNumber;
-        createdAt = System.currentTimeMillis();
-        updatedAt = System.currentTimeMillis();
-
+        this.password = password;
     }
 
     public UUID getId() {
         return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
     }
 
     public Long getCreatedAt() {
@@ -67,6 +34,18 @@ public class User implements Serializable {
 
     public Long getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void update(String newUsername, String newEmail, String newPassword) {
@@ -87,20 +66,5 @@ public class User implements Serializable {
         if (anyValueUpdated) {
             this.updatedAt = Instant.now().getEpochSecond();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", profileImageUrl='" + profileImageUrl + '\'' +
-                '}';
     }
 }

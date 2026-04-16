@@ -2,8 +2,6 @@ package com.sprint.mission.discodeit.repository.file;
 
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.repository.MessageRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
 public class FileMessageRepository implements MessageRepository {
     private final Path DIRECTORY;
     private final String EXTENSION = ".ser";
@@ -24,7 +20,7 @@ public class FileMessageRepository implements MessageRepository {
         if (Files.notExists(DIRECTORY)) {
             try {
                 Files.createDirectories(DIRECTORY);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -42,7 +38,7 @@ public class FileMessageRepository implements MessageRepository {
                 ObjectOutputStream oos = new ObjectOutputStream(fos)
         ) {
             oos.writeObject(message);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return message;
@@ -52,7 +48,6 @@ public class FileMessageRepository implements MessageRepository {
     public Optional<Message> findById(UUID id) {
         Message messageNullable = null;
         Path path = resolvePath(id);
-        // [추가] 파일이 존재할 때만 읽기 시도!
         if (Files.exists(path)) {
             try (
                     FileInputStream fis = new FileInputStream(path.toFile());
@@ -63,8 +58,6 @@ public class FileMessageRepository implements MessageRepository {
                 throw new RuntimeException(e);
             }
         }
-
-        // 파일이 없으면 messageNullable은 null이므로 Optional.empty()가 안전하게 반환됨
         return Optional.ofNullable(messageNullable);
     }
 
@@ -84,7 +77,7 @@ public class FileMessageRepository implements MessageRepository {
                         }
                     })
                     .toList();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
