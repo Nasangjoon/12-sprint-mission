@@ -4,24 +4,18 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.ChannelType;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.repository.ChannelRepository;
-import com.sprint.mission.discodeit.repository.MessageRepository;
-import com.sprint.mission.discodeit.repository.UserRepository;
-import com.sprint.mission.discodeit.repository.file.FileChannelRepository;
-import com.sprint.mission.discodeit.repository.file.FileMessageRepository;
-import com.sprint.mission.discodeit.repository.file.FileUserRepository;
 import com.sprint.mission.discodeit.service.ChannelService;
 import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.service.UserService;
-import com.sprint.mission.discodeit.service.basic.BasicChannelService;
-import com.sprint.mission.discodeit.service.basic.BasicMessageService;
-import com.sprint.mission.discodeit.service.basic.BasicUserService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import java.util.UUID;
 
 @SpringBootApplication
 public class DiscodeitApplication {
+
     static User setupUser(UserService userService) {
         return userService.create("woody", "woody1234", "woody@codeit.com", "woody", null, null);
     }
@@ -30,7 +24,7 @@ public class DiscodeitApplication {
         return userService.find(userId);
     }
 
-    static  User findAllUsers(UserService userService) {
+    static User findAllUsers(UserService userService) {
         return userService.findAll().get(0);
     }
 
@@ -88,40 +82,38 @@ public class DiscodeitApplication {
         messageService.delete(messageId);
         System.out.println("메시지 삭제: " + messageId);
     }
+
     public static void main(String[] args) {
-        SpringApplication.run(DiscodeitApplication.class, args);
-        System.out.println("http://localhost:8080/");
+        ConfigurableApplicationContext context = SpringApplication.run(DiscodeitApplication.class, args);
 
-        UserRepository userRepository = new FileUserRepository();
-        ChannelRepository channelRepository = new FileChannelRepository();
-        MessageRepository messageRepository = new FileMessageRepository();
+        // Spring Context에서 Bean을 조회하여 각 서비스 구현체 할당
+        UserService userService = context.getBean(UserService.class);
+        ChannelService channelService = context.getBean(ChannelService.class);
+        MessageService messageService = context.getBean(MessageService.class);
 
-        UserService basicUserService = new BasicUserService(userRepository);
-        ChannelService basicChannelService = new BasicChannelService(channelRepository);
-        MessageService basicMessageService = new BasicMessageService(messageRepository, channelRepository, userRepository);
+        // 셋업
+        User user = setupUser(userService);
+        User findUser = findUser(userService, user.getId());
+        User findAllUsers = findAllUsers(userService);
+        User updateUser = updateUser(userService, findUser.getId());
 
-        User user = setupUser(basicUserService);
-        User findUser = findUser(basicUserService, user.getId());
-        User findAllUsers = findAllUsers(basicUserService);
-        User updateUser = updateUser(basicUserService, findUser.getId());
+        Channel channel = setupChannel(channelService, user);
+        Channel findChannel = findChannel(channelService, channel.getId());
+        Channel findAllChannels = findAllChannels(channelService);
+        Channel updateChannel = updateChannel(channelService, channel.getId());
 
-        Channel channel = setupChannel(basicChannelService, user);
-        Channel findChannel = findChannel(basicChannelService, channel.getId());
-        Channel findAllChannels = findAllChannels(basicChannelService);
-        Channel updateChannel = updateChannel(basicChannelService, channel.getId());
-
-        Message message = messageCreateTest(basicMessageService, channel, user);
-        Message findMessage = findMessage(basicMessageService, message.getId());
-        Message findAllMessage = findALlMessage(basicMessageService, channel.getId());
-        Message updateMessage = updateMessage(basicMessageService, channel.getId(), message);
+        Message message = messageCreateTest(messageService, channel, user);
+        Message findMessage = findMessage(messageService, message.getId());
+        Message findAllMessage = findALlMessage(messageService, channel.getId());
+        Message updateMessage = updateMessage(messageService, channel.getId(), message);
 
         System.out.println("-------------------유저 테스트-----------------------");
         System.out.println(user);
         System.out.println(findUser);
         System.out.println(findAllUsers);
         System.out.println(updateUser);
-        deleteUser(basicUserService, findUser.getId());
-        System.out.println("삭제 후 사용자 목록: " + basicUserService.findAll());
+        deleteUser(userService, findUser.getId());
+        System.out.println("삭제 후 사용자 목록: " + userService.findAll());
         System.out.println("-------------------유저 테스트 끝-----------------------");
 
         System.out.println("-------------------채널 테스트-----------------------");
@@ -129,8 +121,8 @@ public class DiscodeitApplication {
         System.out.println(findChannel);
         System.out.println(findAllChannels);
         System.out.println(updateChannel);
-        deleteChannel(basicChannelService, findChannel.getId());
-        System.out.println("삭제 후 채널 목록: " + basicChannelService.findAll());
+        deleteChannel(channelService, findChannel.getId());
+        System.out.println("삭제 후 채널 목록: " + channelService.findAll());
         System.out.println("-------------------채널 테스트 끝---------------------");
 
         System.out.println("-------------------메시지 테스트-----------------------");
@@ -138,10 +130,9 @@ public class DiscodeitApplication {
         System.out.println(findMessage);
         System.out.println(findAllMessage);
         System.out.println(updateMessage);
-        deleteMessage(basicMessageService, findMessage.getId());
-        System.out.println("삭제 후 메시지 목록: " + basicMessageService.findAll());
+        deleteMessage(messageService, findMessage.getId());
+        System.out.println("삭제 후 메시지 목록: " + messageService.findAll());
         System.out.println("-------------------메시지 테스트 끝---------------------");
-
     }
 
 }
