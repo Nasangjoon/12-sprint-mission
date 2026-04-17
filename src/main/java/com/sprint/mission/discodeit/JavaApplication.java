@@ -21,21 +21,21 @@ import com.sprint.mission.discodeit.service.basic.BasicUserService;
 public class JavaApplication {
 
 
-    static Channel setupChannel(ChannelService channelService) {
-        PublicChannelCreateRequest request = new PublicChannelCreateRequest("공지", "공지 채널입니다.");
-        Channel channel = channelService.create(request);
-        return channel;
-    }
+//    static Channel setupChannel(ChannelService channelService) {
+//        PublicChannelCreateRequest request = new PublicChannelCreateRequest("공지", "공지 채널입니다.");
+//        Channel channel = channelService.create(request);
+//        return channel;
+//    }
 
     public static void main(String[] args) {
         // 레포지토리 초기화
-        UserRepository userRepository = new FileUserRepository();
-        ChannelRepository channelRepository = new FileChannelRepository();
-        MessageRepository messageRepository = new FileMessageRepository();
+//        UserRepository userRepository = new FileUserRepository();
+//        ChannelRepository channelRepository = new FileChannelRepository();
+//        MessageRepository messageRepository = new FileMessageRepository();
 
         // 서비스 초기화
-        UserService userService = new BasicUserService(userRepository);
-        MessageService messageService = new BasicMessageService(messageRepository, channelRepository, userRepository);
+//        UserService userService = new BasicUserService(userRepository);
+//        MessageService messageService = new BasicMessageService(messageRepository, channelRepository, userRepository);
 
     }
 }
