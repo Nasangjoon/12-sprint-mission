@@ -46,7 +46,7 @@ public class DiscodeitApplication {
         // 서비스 초기화
         UserService userService = new BasicUserService(userRepository);
         ChannelService channelService = context.getBean(ChannelService.class);
-        MessageService messageService = new BasicMessageService(messageRepository, channelRepository, userRepository);
+        MessageService messageService = context.getBean(MessageService.class);
 
         // 셋업
         Channel channel = setupChannel(channelService);
