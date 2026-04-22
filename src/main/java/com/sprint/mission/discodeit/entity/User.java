@@ -1,75 +1,35 @@
 package com.sprint.mission.discodeit.entity;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+@Getter
+@ToString
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private UUID id;
+    private Instant createdAt;
+    private Instant updatedAt;
     private String username;
-    private transient String password;
     private String email;
-    private String nickname;
-    private Long createdAt;
-    private Long updatedAt;
-    private String phoneNumber;
-    private String profileImageUrl;
+    private String password;
+    private UUID profileId;
 
-    public User(String username, String password, String email, String nickname, String profileImageUrl, String phoneNumber) {
-        id = UUID.randomUUID();
+    public User(String username, String email, String password,  UUID profileId) {
+        this.id = UUID.randomUUID();
+        this.createdAt = Instant.now();
         this.username = username;
-        this.password = password;
         this.email = email;
-        this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
-        this.phoneNumber = phoneNumber;
-        createdAt = System.currentTimeMillis();
-        updatedAt = System.currentTimeMillis();
-
+        this.password = password;
+        this.profileId = profileId;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public Long getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void update(String newUsername, String newEmail, String newPassword) {
+    public void update(String newUsername, String newEmail, String newPassword, UUID newProfileId) {
         boolean anyValueUpdated = false;
         if (newUsername != null && !newUsername.equals(this.username)) {
             this.username = newUsername;
@@ -83,24 +43,13 @@ public class User implements Serializable {
             this.password = newPassword;
             anyValueUpdated = true;
         }
+        if (newProfileId != null && !newProfileId.equals(this.profileId)) {
+            this.profileId = newProfileId;
+            anyValueUpdated = true;
+        }
 
         if (anyValueUpdated) {
-            this.updatedAt = Instant.now().getEpochSecond();
+            this.updatedAt = Instant.now();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", profileImageUrl='" + profileImageUrl + '\'' +
-                '}';
     }
 }

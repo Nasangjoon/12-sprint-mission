@@ -181,4 +181,7 @@ file-data-map/
 *.ser
 *.dat
 
+# Spring Boot 설정 파일 (민감 정보 포함 시)
+application.yml
+application.properties
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,gradle,intellij+all
