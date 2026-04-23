@@ -4,8 +4,10 @@ package com.sprint.mission.discodeit.controller;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
+import com.sprint.mission.discodeit.dto.request.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.entity.UserStatus;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.UserStatusService;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class UserController {
 
     @RequestMapping("findAll")
     public ResponseEntity<List<UserDto>> findAll() {
-        List<UserDto> usersList =  userService.findAll();
+        List<UserDto> usersList = userService.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(usersList);
     }
@@ -68,6 +67,15 @@ public class UserController {
         userService.delete(userId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @RequestMapping(path = "userStatus")
+    public ResponseEntity<UserStatus> userStatus(
+            @RequestParam UUID userId,
+            @RequestBody UserStatusUpdateRequest request) {
+        UserStatus userStatus = userStatusService.updateByUserId(userId, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userStatus);
     }
 
     private Optional<BinaryContentCreateRequest> resolveProfileRequest(MultipartFile profile) {
