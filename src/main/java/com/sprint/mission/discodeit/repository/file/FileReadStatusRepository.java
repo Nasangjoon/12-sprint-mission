@@ -60,7 +60,7 @@ public class FileReadStatusRepository implements ReadStatusRepository {
         ReadStatus readStatusNullable = null;
         Path path = resolvePath(id);
 
-        if (Files.notExists(path)) {
+        if (!Files.notExists(path)) {
             try (
                     FileInputStream fis = new FileInputStream(path.toFile());
                     ObjectInputStream ois = new ObjectInputStream(fis)
