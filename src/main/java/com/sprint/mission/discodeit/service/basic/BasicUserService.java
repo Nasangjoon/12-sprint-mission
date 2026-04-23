@@ -110,12 +110,19 @@ public List<User> findAll() {
 }
 
 
-@Override
-public void delete(UUID userId) {
-    if (!userRepository.existsById(userId)) {
-        throw new NoSuchElementException("User with id " + userId + " not found");
+    // Line 113-119 수정
+    @Override
+    public void delete(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+
+        // 프로필 이미지 삭제
+        Optional.ofNullable(user.getProfileId())
+                .ifPresent(binaryContentRepository::deleteById);
+        // UserStatus 삭제
+        userStatusRepository.deleteByUserId(userId);
+        // User 삭제
+        userRepository.deleteById(userId);
     }
-    userRepository.deleteById(userId);
-}
     }
 

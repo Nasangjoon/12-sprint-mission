@@ -23,15 +23,16 @@ public class BasicReadStatusService implements ReadStatusService {
     private final UserRepository userRepository;
     private final ChannelRepository channelRepository;
 
+    // Line 26-46 수정
     @Override
     public ReadStatus create(ReadStatusCreateRequest request) {
         UUID userId = request.userId();
         UUID channelId = request.channelId();
 
-        if (userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {  // Line 31: ! 추가
             throw new NoSuchElementException("User id " + userId + " does not exist");
         }
-        if(!channelRepository.existsById(channelId)) {
+        if (!channelRepository.existsById(channelId)) {
             throw new NoSuchElementException("Channel id " + channelId + " does not exist");
         }
         if (readStatusRepository.findAllByUserId(userId).stream()
@@ -42,8 +43,7 @@ public class BasicReadStatusService implements ReadStatusService {
 
         Instant lastReadAt = request.lastReadAt();
         ReadStatus readStatus = new ReadStatus(userId, channelId, lastReadAt);
-        readStatusRepository.save(readStatus);
-        return readStatus;
+        return readStatusRepository.save(readStatus);  // Line 46: save 결과 직접 반환
     }
 
     @Override
