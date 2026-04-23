@@ -23,15 +23,15 @@ public class BinaryContentController {
 
 
     @RequestMapping(path = "find")
-    public ResponseEntity<BinaryContent> find(@RequestParam UUID BinaryContentId) {
-        BinaryContent binaryContent = binaryContentService.find(BinaryContentId);
+    public ResponseEntity<BinaryContent> find(@RequestParam UUID binaryContentId) {
+        BinaryContent binaryContent = binaryContentService.find(binaryContentId);
 
         return ResponseEntity.status(HttpStatus.OK).body(binaryContent);
     }
 
     @RequestMapping(path = "findAll")
-    public ResponseEntity<List<BinaryContent>> findAll(@RequestParam List<UUID> BinaryContentIds) {
-        List<BinaryContent> binaryContentList = binaryContentService.findAllByIdIn(BinaryContentIds);
+    public ResponseEntity<List<BinaryContent>> findAll(@RequestParam List<UUID> binaryContentIds) {
+        List<BinaryContent> binaryContentList = binaryContentService.findAllByIdIn(binaryContentIds);
 
         return ResponseEntity.status(HttpStatus.OK).body(binaryContentList);
     }
