@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
@@ -61,7 +62,7 @@ public class BasicUserService implements UserService {
         return createdUser;
 
 
-}
+    }
 
 
     @Override
@@ -98,16 +99,19 @@ public class BasicUserService implements UserService {
     }
 
 
-@Override
-public User find(UUID userId) {
-    return userRepository.findById(userId)
-            .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
-}
+    @Override
+    public User find(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+    }
 
-@Override
-public List<User> findAll() {
-    return userRepository.findAll();
-}
+    @Override
+    public List<UserDto> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
 
 
     // Line 113-119 수정
@@ -124,5 +128,22 @@ public List<User> findAll() {
         // User 삭제
         userRepository.deleteById(userId);
     }
+
+    private UserDto toDto(User user) {
+        Boolean online = userStatusRepository.findByUserId(user.getId())
+                .map(UserStatus::isOnline)
+                .orElse(null);
+
+        return new UserDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getProfileId(),
+                online,
+                user.getUpdatedAt(),
+                user.getCreatedAt()
+        );
+
     }
+}
 
