@@ -67,26 +67,24 @@ public class BasicUserStatusService implements UserStatusService {
         return userStatus;
     }
 
+    // Line 70-82 수정
     @Override
     public UserStatus updateByUserId(UUID userId, UserStatusUpdateRequest request) {
-
         Instant newLastActiveAt = request.newLastActiveAt();
 
-        UserStatus userStatus = userStatusRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("UserStatus with id " + userId + " not found"));
+        UserStatus userStatus = userStatusRepository.findByUserId(userId)  // Line 75: findByUserId로 변경
+                .orElseThrow(() -> new NoSuchElementException("UserStatus with userId " + userId + " not found"));
         userStatus.update(newLastActiveAt);
 
-        userStatusRepository.save(userStatus);
-
-        return userStatus;
+        return userStatusRepository.save(userStatus);
     }
 
+    // Line 84-91 수정
     @Override
     public void delete(UUID userStatusId) {
-        if(userStatusRepository.existsById(userStatusId)) {
+        if (!userStatusRepository.existsById(userStatusId)) {  // Line 86: ! 추가
             throw new NoSuchElementException("UserStatus with id " + userStatusId + " not found");
         }
-
         userStatusRepository.deleteById(userStatusId);
     }
 }
