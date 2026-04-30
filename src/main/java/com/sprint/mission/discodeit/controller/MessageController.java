@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,15 +18,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Controller
-@ResponseBody
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/message")
 public class MessageController {
 
     private final MessageService messageService;
 
-    @RequestMapping(path = "create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Message> create(
             @RequestPart MessageCreateRequest request,
             @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
@@ -51,24 +49,24 @@ public class MessageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMessage);
     }
 
-    @RequestMapping(path = "findAll")
+    @GetMapping(path = "findAll")
     public ResponseEntity<List<Message>> findAll(@RequestParam UUID channelId) {
         List<Message> messageList = messageService.findAllByChannelId(channelId);
 
         return ResponseEntity.status(HttpStatus.OK).body(messageList);
     }
 
-    @RequestMapping(path = "update")
+    @PatchMapping(path = "update/{messageId}")
     public ResponseEntity<Message> update(
-            @RequestParam UUID messageId,
+            @PathVariable UUID messageId,
             @RequestBody MessageUpdateRequest request) {
         Message updateMessage = messageService.update(messageId, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(updateMessage);
     }
 
-    @RequestMapping(path = "delete")
-    public ResponseEntity<Void> delete(@RequestParam UUID messageId) {
+    @DeleteMapping(path = "delete/{messageId}")
+    public ResponseEntity<Void> delete(@PathVariable UUID messageId) {
         messageService.delete(messageId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
