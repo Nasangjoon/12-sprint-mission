@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,8 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Controller
-@ResponseBody
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
@@ -32,7 +30,7 @@ public class UserController {
     private final UserService userService;
     private final UserStatusService userStatusService;
 
-    @RequestMapping(path = "create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<User> create(
             @RequestPart("userCreateRequest") UserCreateRequest request,
             @RequestPart(value = "profile", required = false) MultipartFile profile) {
@@ -43,17 +41,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
-    @RequestMapping("findAll")
+    @GetMapping("findAll")
     public ResponseEntity<List<UserDto>> findAll() {
         List<UserDto> usersList = userService.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(usersList);
     }
 
-    @RequestMapping(path = "update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(path = "update/{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<User> update(
-            @RequestParam("userId") UUID userId,
-            @RequestPart("userUpdateRequest") UserUpdateRequest request,
+            @PathVariable UUID userId,
+            @RequestPart UserUpdateRequest request,
             @RequestPart(value = "profile", required = false) MultipartFile profile) {
         Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
                 .flatMap(this::resolveProfileRequest);
@@ -62,16 +60,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(updateUser);
     }
 
-    @RequestMapping(path = "delete")
-    public ResponseEntity<Void> delete(@RequestParam UUID userId) {
+    @DeleteMapping(path = "delete/{userId}")
+    public ResponseEntity<Void> delete(@PathVariable UUID userId) {
         userService.delete(userId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @RequestMapping(path = "userStatus")
+    @PatchMapping(path = "userStatus/{userId}")
     public ResponseEntity<UserStatus> userStatus(
-            @RequestParam UUID userId,
+            @PathVariable UUID userId,
             @RequestBody UserStatusUpdateRequest request) {
         UserStatus userStatus = userStatusService.updateByUserId(userId, request);
 
