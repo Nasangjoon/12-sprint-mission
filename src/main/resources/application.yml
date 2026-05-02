@@ -1,6 +1,10 @@
 spring:
   application:
     name: discodeit
+    servlet:
+      multipart:
+        maxFileSize: 10MB
+        maxRequestSize: 30MB
 
 discodeit:
   repository:
