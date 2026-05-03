@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController implements UserApi {
 
     private final UserService userService;
@@ -42,14 +42,14 @@ public class UserController implements UserApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
-    @GetMapping("findAll")
+    @GetMapping
     public ResponseEntity<List<UserDto>> findAll() {
         List<UserDto> usersList = userService.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(usersList);
     }
 
-    @PatchMapping(path = "update/{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(path = "{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<User> update(
             @PathVariable UUID userId,
             @RequestPart UserUpdateRequest request,
@@ -61,14 +61,14 @@ public class UserController implements UserApi {
         return ResponseEntity.status(HttpStatus.OK).body(updateUser);
     }
 
-    @DeleteMapping(path = "delete/{userId}")
+    @DeleteMapping(path = "{userId}")
     public ResponseEntity<Void> delete(@PathVariable UUID userId) {
         userService.delete(userId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PatchMapping(path = "userStatus/{userId}")
+    @PatchMapping(path = "{userId}/userStatus")
     public ResponseEntity<UserStatus> userStatus(
             @PathVariable UUID userId,
             @RequestBody UserStatusUpdateRequest request) {
