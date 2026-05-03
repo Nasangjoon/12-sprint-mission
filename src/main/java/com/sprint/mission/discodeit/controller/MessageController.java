@@ -28,7 +28,7 @@ public class MessageController implements MessageApi {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Message> create(
-            @RequestPart MessageCreateRequest request,
+            @RequestPart MessageCreateRequest messageCreateRequest,
             @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
         List<BinaryContentCreateRequest> attachmentsList = Optional.ofNullable(attachments)
                 .map(files -> files.stream()
@@ -45,7 +45,7 @@ public class MessageController implements MessageApi {
                         })
                         .toList())
                 .orElse(new ArrayList<>());
-        Message createdMessage = messageService.create(request, attachmentsList);
+        Message createdMessage = messageService.create(messageCreateRequest, attachmentsList);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMessage);
     }
