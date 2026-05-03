@@ -17,26 +17,26 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/readStatus")
+@RequestMapping("/api/readStatuses")
 public class ReadStatusController implements ReadStatusApi {
 
     private final ReadStatusService readStatusService;
 
-    @PostMapping(path = "create")
+    @PostMapping
     public ResponseEntity<ReadStatus> create(@RequestBody ReadStatusCreateRequest request) {
         ReadStatus readStatus = readStatusService.create(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(readStatus);
     }
 
-    @GetMapping(path = "findAll")
+    @GetMapping
     public ResponseEntity<List<ReadStatus>> findAll(@RequestParam UUID userId) {
         List<ReadStatus> readStatusList = readStatusService.findAllByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(readStatusList);
     }
 
-    @PatchMapping(path = "update{readStatusId}")
+    @PatchMapping(path = "{readStatusId}")
     public ResponseEntity<ReadStatus> update(
             @PathVariable UUID readStatusId,
             @RequestBody ReadStatusUpdateRequest request) {
