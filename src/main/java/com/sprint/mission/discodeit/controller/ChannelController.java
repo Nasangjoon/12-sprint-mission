@@ -23,28 +23,28 @@ public class ChannelController implements ChannelApi {
 
     private final ChannelService channelService;
 
-    @PostMapping(path = "createPublic")
+    @PostMapping(path = "public")
     public ResponseEntity<Channel> createPublic(@RequestBody PublicChannelCreateRequest request) {
         Channel createChannel = channelService.create(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createChannel);
     }
 
-    @PostMapping(path = "createPrivate")
+    @PostMapping(path = "private")
     public ResponseEntity<Channel> createPrivate(@RequestBody PrivateChannelCreateRequest request) {
         Channel createChannel = channelService.create(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createChannel);
     }
 
-    @GetMapping(path = "findAll")
+    @GetMapping
     public ResponseEntity<List<ChannelDto>> findAll(@RequestParam UUID userId) {
         List<ChannelDto> channelList = channelService.findAllByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(channelList);
     }
 
-    @PatchMapping(path = "update/{channelId}")
+    @PatchMapping(path = "{channelId}")
     public ResponseEntity<Channel> update(
             @PathVariable UUID channelId,
             @RequestBody PublicChannelUpdateRequest request) {
@@ -53,7 +53,7 @@ public class ChannelController implements ChannelApi {
         return ResponseEntity.status(HttpStatus.OK).body(updateChannel);
     }
 
-    @DeleteMapping(path = "delete/{channelId}")
+    @DeleteMapping(path = "{channelId}")
     public ResponseEntity<Void> delete(@PathVariable UUID channelId) {
         channelService.delete(channelId);
 
