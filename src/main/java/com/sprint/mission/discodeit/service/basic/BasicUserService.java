@@ -72,10 +72,12 @@ public class BasicUserService implements UserService {
 
         String newUsername = userUpdateRequest.newUsername();
         String newEmail = userUpdateRequest.newEmail();
-        if (userRepository.existsByEmail(newEmail)) {
+
+        if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
             throw new IllegalArgumentException("User with email " + newEmail + " already exists");
         }
-        if (userRepository.existsByUsername(newUsername)) {
+
+        if (!user.getUsername().equals(newUsername) && userRepository.existsByUsername(newUsername)) {
             throw new IllegalArgumentException("User with username " + newUsername + " already exists");
         }
 
@@ -90,7 +92,7 @@ public class BasicUserService implements UserService {
                     BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length, contentType, bytes);
                     return binaryContentRepository.save(binaryContent).getId();
                 })
-                .orElse(null);
+                .orElse(user.getProfileId());
 
         String newPassword = userUpdateRequest.newPassword();
         user.update(newUsername, newEmail, newPassword, nullableProfileId);
@@ -99,9 +101,11 @@ public class BasicUserService implements UserService {
     }
 
 
+    // BasicUserService.java 수정
     @Override
-    public User find(UUID userId) {
+    public UserDto find(UUID userId) {
         return userRepository.findById(userId)
+                .map(this::toDto) // DTO로 변환
                 .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
     }
 
