@@ -69,7 +69,7 @@ public class UserController implements UserApi {
     }
 
     @PatchMapping(path = "{userId}/userStatus")
-    public ResponseEntity<UserStatus> userStatus(
+    public ResponseEntity<UserStatus> updateUserStatus(
             @PathVariable UUID userId,
             @RequestBody UserStatusUpdateRequest request) {
         UserStatus userStatus = userStatusService.updateByUserId(userId, request);
