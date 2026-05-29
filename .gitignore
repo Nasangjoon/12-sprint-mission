@@ -185,5 +185,6 @@ file-data-map/
 # API documentation auto-generated file
 api.docs.json
 api-docs_1.1.json
+api-docs_1.2.json
 # Spring Boot 설정 파일 (민감 정보 포함 시)
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,gradle,intellij+all
