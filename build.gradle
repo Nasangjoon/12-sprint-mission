@@ -1,12 +1,11 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.0'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.sprint.mission'
 version = '0.0.1-SNAPSHOT'
-
 
 java {
     toolchain {
@@ -14,7 +13,6 @@ java {
     }
 }
 
-// Lombok 설정을 위해 추가 (필수)
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -26,22 +24,18 @@ repositories {
 }
 
 dependencies {
-    // [중요] spring-boot-starter-web으로 수정
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'org.postgresql:postgresql'
 
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
-    // [중요] spring-boot-starter-test로 수정
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-
-    // OpenAPI 의존성 추가
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
 }
 
 tasks.named('test') {
