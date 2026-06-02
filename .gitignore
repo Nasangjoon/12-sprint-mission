@@ -176,6 +176,7 @@ gradle-app.setting
 *.hprof
 
 .idea
+.discodeit
 # Git이 무시할 데이터 폴더
 file-data-map/
 *.ser
