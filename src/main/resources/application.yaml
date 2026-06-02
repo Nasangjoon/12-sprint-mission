@@ -22,10 +22,17 @@ spring:
     open-in-view: false
 
 
+# log
 logging:
   level:
-    org.hibernate.SQL: debug
+    root: info
+    # Hibernate SQL
+    org.hibernate.SQL: off
     org.hibernate.orm.jdbc.bind: trace
+    org.hibernate.type.descriptor.sql: trace
+    # Spring Web
+    org.springframework.web: trace
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 discodeit:
   storage:
