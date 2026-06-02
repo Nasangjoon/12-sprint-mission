@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,6 +43,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     }
   }
 
+  @Override
   public UUID put(UUID binaryContentId, byte[] bytes) {
     Path filePath = resolvePath(binaryContentId);
     if (Files.exists(filePath)) {
@@ -56,6 +57,7 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     return binaryContentId;
   }
 
+  @Override
   public InputStream get(UUID binaryContentId) {
     Path filePath = resolvePath(binaryContentId);
     if (Files.notExists(filePath)) {
@@ -69,14 +71,27 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     }
   }
 
+  @Override
+  public void delete(UUID binaryContentId) {
+    Path filePath = resolvePath(binaryContentId);
+    try {
+      Files.deleteIfExists(filePath);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   private Path resolvePath(UUID key) {
     return root.resolve(key.toString());
   }
 
   @Override
   public ResponseEntity<Resource> download(BinaryContentDto metaData) {
-    InputStream inputStream = get(metaData.id());
-    Resource resource = new InputStreamResource(inputStream);
+    Path filePath = resolvePath(metaData.id());
+    if (Files.notExists(filePath)) {
+      throw new NoSuchElementException("File with key " + metaData.id() + " does not exist");
+    }
+    Resource resource = new FileSystemResource(filePath);
 
     return ResponseEntity
         .status(HttpStatus.OK)

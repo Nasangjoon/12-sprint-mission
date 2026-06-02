@@ -61,5 +61,6 @@ public class BasicBinaryContentService implements BinaryContentService {
       throw new NoSuchElementException("BinaryContent with id " + binaryContentId + " not found");
     }
     binaryContentRepository.deleteById(binaryContentId);
+    binaryContentStorage.delete(binaryContentId);
   }
 }
