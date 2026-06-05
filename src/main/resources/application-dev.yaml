@@ -27,6 +27,7 @@ spring:
 
 logging:
   level:
+    com.sprint.mission.discodeit: debug
     # Hibernate SQL
     org.hibernate.SQL: off
     org.hibernate.orm.jdbc.bind: trace

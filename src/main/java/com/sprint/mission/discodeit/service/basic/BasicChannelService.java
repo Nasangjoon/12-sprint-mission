@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class BasicChannelService implements ChannelService {
@@ -39,6 +41,7 @@ public class BasicChannelService implements ChannelService {
     Channel channel = new Channel(ChannelType.PUBLIC, name, description);
 
     channelRepository.save(channel);
+    log.info("Public channel created: {} (ID: {})", name, channel.getId());
     return channelMapper.toDto(channel);
   }
 
@@ -53,6 +56,8 @@ public class BasicChannelService implements ChannelService {
         .toList();
     readStatusRepository.saveAll(readStatuses);
 
+    log.info("Private channel created (ID: {}) with {} participants", channel.getId(),
+        readStatuses.size());
     return channelMapper.toDto(channel);
   }
 
@@ -62,7 +67,10 @@ public class BasicChannelService implements ChannelService {
     return channelRepository.findById(channelId)
         .map(channelMapper::toDto)
         .orElseThrow(
-            () -> new NoSuchElementException("Channel with id " + channelId + " not found"));
+            () -> {
+              log.warn("Channel find failed: ID {} not found", channelId);
+              return new NoSuchElementException("Channel with id " + channelId + " not found");
+            });
   }
 
   @Transactional(readOnly = true)
@@ -86,11 +94,16 @@ public class BasicChannelService implements ChannelService {
     String newDescription = request.newDescription();
     Channel channel = channelRepository.findById(channelId)
         .orElseThrow(
-            () -> new NoSuchElementException("Channel with id " + channelId + " not found"));
+            () -> {
+              log.warn("Channel update failed: ID {} not found", channelId);
+              return new NoSuchElementException("Channel with id " + channelId + " not found");
+            });
     if (channel.getType().equals(ChannelType.PRIVATE)) {
+      log.warn("Channel update failed: Private channel {} cannot be updated", channelId);
       throw new IllegalArgumentException("Private channel cannot be updated");
     }
     channel.update(newName, newDescription);
+    log.info("Channel updated: ID {}", channelId);
     return channelMapper.toDto(channel);
   }
 
@@ -98,6 +111,7 @@ public class BasicChannelService implements ChannelService {
   @Override
   public void delete(UUID channelId) {
     if (!channelRepository.existsById(channelId)) {
+      log.warn("Channel delete failed: ID {} not found", channelId);
       throw new NoSuchElementException("Channel with id " + channelId + " not found");
     }
 
@@ -105,5 +119,6 @@ public class BasicChannelService implements ChannelService {
     readStatusRepository.deleteAllByChannelId(channelId);
 
     channelRepository.deleteById(channelId);
+    log.info("Channel deleted: ID {}", channelId);
   }
 }

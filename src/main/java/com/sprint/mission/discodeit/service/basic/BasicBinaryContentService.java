@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class BasicBinaryContentService implements BinaryContentService {
@@ -36,6 +38,7 @@ public class BasicBinaryContentService implements BinaryContentService {
     binaryContentRepository.save(binaryContent);
     binaryContentStorage.put(binaryContent.getId(), bytes);
 
+    log.info("Binary content created: {} (ID: {})", fileName, binaryContent.getId());
     return binaryContentMapper.toDto(binaryContent);
   }
 
@@ -43,8 +46,11 @@ public class BasicBinaryContentService implements BinaryContentService {
   public BinaryContentDto find(UUID binaryContentId) {
     return binaryContentRepository.findById(binaryContentId)
         .map(binaryContentMapper::toDto)
-        .orElseThrow(() -> new NoSuchElementException(
-            "BinaryContent with id " + binaryContentId + " not found"));
+        .orElseThrow(() -> {
+          log.warn("Binary content find failed: ID {} not found", binaryContentId);
+          return new NoSuchElementException(
+              "BinaryContent with id " + binaryContentId + " not found");
+        });
   }
 
   @Override
@@ -58,9 +64,11 @@ public class BasicBinaryContentService implements BinaryContentService {
   @Override
   public void delete(UUID binaryContentId) {
     if (!binaryContentRepository.existsById(binaryContentId)) {
+      log.warn("Binary content delete failed: ID {} not found", binaryContentId);
       throw new NoSuchElementException("BinaryContent with id " + binaryContentId + " not found");
     }
     binaryContentRepository.deleteById(binaryContentId);
     binaryContentStorage.delete(binaryContentId);
+    log.info("Binary content deleted: ID {}", binaryContentId);
   }
 }

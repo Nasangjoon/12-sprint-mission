@@ -182,6 +182,8 @@ file-data-map/
 *.ser
 *.dat
 
+# .log 파일은 로그 파일이므로 무시
+.logs
 
 # API documentation auto-generated file
 api.docs.json
