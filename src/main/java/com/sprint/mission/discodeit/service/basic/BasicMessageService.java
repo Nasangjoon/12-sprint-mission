@@ -1,5 +1,8 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.message.MessageNotFoundException;
+import com.sprint.mission.discodeit.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
@@ -19,7 +22,6 @@ import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import java.time.Instant;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -54,13 +56,13 @@ public class BasicMessageService implements MessageService {
         .orElseThrow(
             () -> {
               log.warn("Message creation failed: Channel ID {} does not exist", channelId);
-              return new NoSuchElementException("Channel with id " + channelId + " does not exist");
+              return ChannelNotFoundException.withId(channelId);
             });
     User author = userRepository.findById(authorId)
         .orElseThrow(
             () -> {
               log.warn("Message creation failed: Author ID {} does not exist", authorId);
-              return new NoSuchElementException("Author with id " + authorId + " does not exist");
+              return UserNotFoundException.withId(authorId);
             }
         );
 
@@ -100,7 +102,7 @@ public class BasicMessageService implements MessageService {
         .orElseThrow(
             () -> {
               log.warn("Message find failed: ID {} not found", messageId);
-              return new NoSuchElementException("Message with id " + messageId + " not found");
+              return MessageNotFoundException.withId(messageId);
             });
   }
 
@@ -130,7 +132,7 @@ public class BasicMessageService implements MessageService {
         .orElseThrow(
             () -> {
               log.warn("Message update failed: ID {} not found", messageId);
-              return new NoSuchElementException("Message with id " + messageId + " not found");
+              return MessageNotFoundException.withId(messageId);
             });
     message.update(newContent);
     log.info("Message updated: ID {}", messageId);
@@ -142,7 +144,7 @@ public class BasicMessageService implements MessageService {
   public void delete(UUID messageId) {
     if (!messageRepository.existsById(messageId)) {
       log.warn("Message delete failed: ID {} not found", messageId);
-      throw new NoSuchElementException("Message with id " + messageId + " not found");
+      throw MessageNotFoundException.withId(messageId);
     }
 
     messageRepository.deleteById(messageId);

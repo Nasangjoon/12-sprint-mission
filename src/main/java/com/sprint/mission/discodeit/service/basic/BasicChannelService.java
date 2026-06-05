@@ -1,5 +1,7 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import com.sprint.mission.discodeit.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.exception.channel.PrivateChannelUpdateException;
 import com.sprint.mission.discodeit.dto.data.ChannelDto;
 import com.sprint.mission.discodeit.dto.request.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.request.PublicChannelCreateRequest;
@@ -14,7 +16,6 @@ import com.sprint.mission.discodeit.repository.ReadStatusRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.ChannelService;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +70,7 @@ public class BasicChannelService implements ChannelService {
         .orElseThrow(
             () -> {
               log.warn("Channel find failed: ID {} not found", channelId);
-              return new NoSuchElementException("Channel with id " + channelId + " not found");
+              return ChannelNotFoundException.withId(channelId);
             });
   }
 
@@ -96,11 +97,11 @@ public class BasicChannelService implements ChannelService {
         .orElseThrow(
             () -> {
               log.warn("Channel update failed: ID {} not found", channelId);
-              return new NoSuchElementException("Channel with id " + channelId + " not found");
+              return ChannelNotFoundException.withId(channelId);
             });
     if (channel.getType().equals(ChannelType.PRIVATE)) {
       log.warn("Channel update failed: Private channel {} cannot be updated", channelId);
-      throw new IllegalArgumentException("Private channel cannot be updated");
+      throw PrivateChannelUpdateException.forChannel(channelId);
     }
     channel.update(newName, newDescription);
     log.info("Channel updated: ID {}", channelId);
@@ -112,7 +113,7 @@ public class BasicChannelService implements ChannelService {
   public void delete(UUID channelId) {
     if (!channelRepository.existsById(channelId)) {
       log.warn("Channel delete failed: ID {} not found", channelId);
-      throw new NoSuchElementException("Channel with id " + channelId + " not found");
+      throw ChannelNotFoundException.withId(channelId);
     }
 
     messageRepository.deleteAllByChannelId(channelId);
